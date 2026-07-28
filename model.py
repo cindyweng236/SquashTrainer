@@ -1,35 +1,46 @@
 import cv2
 import mediapipe as mp
+import numpy as np
 
-cap = cv2.VideoCapture("squash1.mp4")
+def extract_landmarks(video_path, output_path):
+    cap = cv2.VideoCapture(video_path)
 
-#init pose detector
-mp_pose = mp.solutions.pose
-pose = mp_pose.Pose()
+    mp_pose = mp.solutions.pose
+    pose = mp_pose.Pose()
 
-mp_draw = mp.solutions.drawing_utils
+    all_frames = []
 
-while True:
-    ret, frame = cap.read()
-    if not ret:
-        break
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
 
-    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    results = pose.process(rgb)
+        results = pose.process(rgb)
 
-    #if pose detected, then draw the landmarks and connections
-    if results.pose_landmarks:
-        mp_draw.draw_landmarks(
-            frame,
-            results.pose_landmarks,
-            mp_pose.POSE_CONNECTIONS
-        )
+        frame_landmarks = []
+        if results.pose_landmarks:
+            # 33 landmarks
+            for landmark in results.pose_landmarks.landmark:
+                frame_landmarks.append([
+                    landmark.x,
+                    landmark.y,
+                    landmark.z,
+                    landmark.visibility
+                ])
+        else:
+            frame_landmarks = [[np.nan] * 4 for _ in range(33)]
+        all_frames.append(frame_landmarks)
 
-    cv2.imshow("Pose", frame)
+    cap.release()
+    pose.close()
 
-    if cv2.waitKey(1) == 27:
-        break
+    # Shape: (num_frames, 33, 4)
+    all_frames = np.array(all_frames)
 
-cap.release()
-cv2.destroyAllWindows()
+    print(all_frames.shape)
+
+    np.save(output_path, all_frames)
+    
+    return all_frames
