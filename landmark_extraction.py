@@ -111,9 +111,9 @@ def main():
                 base_name = os.path.splitext(filename)[0]
                 output_name = base_name + ".npy"
                 landmark_output_path = os.path.join(landmark_output_dir, output_name)
-                fps__output_path = os.path.join(fps_output_dir, base_name + "_fps.json")
+                fps_output_path = os.path.join(fps_output_dir, base_name + "_fps.json")
 
-                print(f"Processing {video_path} -> {landmark_output_path}, {fps__output_path}")
+                print(f"Processing {video_path} -> {landmark_output_path}, {fps_output_path}")
                 all_frames = extract_landmarks(video_path, landmark_output_path)
                 extract_fps(video_path, fps_output_path, num_frames=len(all_frames))
 
