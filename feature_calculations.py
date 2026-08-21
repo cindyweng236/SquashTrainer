@@ -56,8 +56,8 @@ def hip_line_angle(frame, lms):
 
     return np.degrees(np.arctan2(hip_vector[1], hip_vector[0]))
 
-#TODO: add fps data in data collection
-#For calculating wrist, elow, knee, and ankle velocity, we can use the difference in position between frames and multiply by the frame rate to get an approximate velocity. This will give us a rough estimate of how fast these joints are moving during the swing.
+# For calculating wrist, elbow, knee, and ankle velocity, use difference in
+# position between adjacent frames and multiply by FPS.
 def get_velocity(targetLmIndex, isRight, frame, lms, fps):
     if frame == 0:
         return 0.0
